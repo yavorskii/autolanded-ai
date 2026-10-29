@@ -38,6 +38,19 @@ services:
     networks:
       - autolanded-network
 
+  autolanded-frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: autolanded-frontend
+    restart: unless-stopped
+    depends_on:
+      - autolanded-backend
+    ports:
+      - "3001:80"
+    networks:
+      - autolanded-network
+
 networks:
   autolanded-network:
     driver: bridge
