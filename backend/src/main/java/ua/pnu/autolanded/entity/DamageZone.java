@@ -1,0 +1,18 @@
+package ua.pnu.autolanded.entity;
+
+public enum DamageZone {
+    FRONT_BUMPER,
+    HOOD,
+    LEFT_FENDER,
+    RIGHT_FENDER,
+    LEFT_HEADLIGHT,
+    RIGHT_HEADLIGHT,
+    RADIATOR_SUPPORT,
+    COOLING_PUMP,
+    AIRBAG_KIT,
+    SUSPENSION_FRONT_RIGHT,
+    SUSPENSION_FRONT_LEFT,
+    FRONT_WINDSHIELD,
+    REAR_BUMPER,
+    TRUNK_LID
+}
