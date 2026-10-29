@@ -1,0 +1,46 @@
+services:
+  autolanded-postgres:
+    image: postgres:16-alpine
+    container_name: autolanded-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: autolanded_db
+      POSTGRES_USER: autolanded_user
+      POSTGRES_PASSWORD: autolanded_password
+    ports:
+      - "5434:5432"
+    volumes:
+      - autolanded_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U autolanded_user -d autolanded_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - autolanded-network
+
+  autolanded-backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: autolanded-backend
+    restart: unless-stopped
+    depends_on:
+      autolanded-postgres:
+        condition: service_healthy
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://autolanded-postgres:5432/autolanded_db
+      SPRING_DATASOURCE_USERNAME: autolanded_user
+      SPRING_DATASOURCE_PASSWORD: autolanded_password
+      SERVER_PORT: 8080
+    ports:
+      - "8081:8080"
+    networks:
+      - autolanded-network
+
+networks:
+  autolanded-network:
+    driver: bridge
+
+volumes:
+  autolanded_pgdata:

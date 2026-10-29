@@ -1,0 +1,32 @@
+server:
+  port: ${SERVER_PORT:8081}
+
+spring:
+  application:
+    name: autolanded-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5434/autolanded_db}
+    username: ${SPRING_DATASOURCE_USERNAME:autolanded_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:autolanded_password}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+app:
+  pricing:
+    defaults:
+      paint-price-per-element: 120.0
+      labor-rate-per-hour: 25.0
+      airbag-restore-price: 450.0
+      geometry-bench-hourly-rate: 35.0
+      broker-and-terminal-fee: 350.0
+      certification-fee: 250.0
+      ocean-freight-default: 1200.0
+      us-land-transport-default: 450.0
+      destination-handling-fee: 950.0
