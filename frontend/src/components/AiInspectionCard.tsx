@@ -27,97 +27,122 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
   const [showOverlays, setShowOverlays] = useState(true)
   const [selectedBoxId, setSelectedBoxId] = useState<string | null>(null)
 
-  // Real auction photos representation with multiple angles
+  // Real Copart salvage photos of Tesla Model X
   const photoAngles = [
     {
       id: 'front-right',
-      title: 'Ракурс 1: Перед / Удар 3/4',
+      title: 'Ракурс 1: Передній удар 3/4 (Copart Yard)',
       badge: 'Головне пошкодження',
-      // High-res realistic damage visual
-      url: 'https://images.unsplash.com/photo-1541899481282-d53bffe3c35d?q=80&w=1200&auto=format&fit=crop',
+      url: '/lots/tesla-x/front-right.jpg',
       boxes: [
         {
           id: 'b1',
           labelUa: 'Деформація підсилювача бампера & Фара',
           zone: 'FRONT_BUMPER',
           severity: 'SEVERE',
-          confidence: 94,
-          top: '46%',
-          left: '52%',
-          width: '32%',
-          height: '28%',
+          confidence: 96,
+          top: '53%',
+          left: '48%',
+          width: '24%',
+          height: '26%',
           descriptionUa: 'Зминання абсорбера, розрив кріплень LED-модуля фари. Потрібна заміна в зборі.',
           oemNumber: '1083983-00-A'
         },
         {
           id: 'b2',
-          labelUa: 'Залом ребра жорсткості капота',
-          zone: 'HOOD',
-          severity: 'MODERATE',
-          confidence: 89,
-          top: '30%',
-          left: '38%',
-          width: '28%',
+          labelUa: 'Деформація переднього правого крила',
+          zone: 'FRONT_RIGHT_FENDER',
+          severity: 'SEVERE',
+          confidence: 93,
+          top: '47%',
+          left: '40%',
+          width: '13%',
           height: '22%',
-          descriptionUa: 'Деформація алюмінієвої панелі, рихтування ускладнене через подвійний шар.',
+          descriptionUa: 'Глибокий залом алюмінієвої панелі крила над колісною аркою. Заміна під фарбування.',
           oemNumber: '1054488-00-A'
         },
         {
           id: 'b3',
-          labelUa: 'Ризик розриву контуру охолодження',
+          labelUa: 'Залом кромки капота',
+          zone: 'HOOD',
+          severity: 'MODERATE',
+          confidence: 89,
+          top: '44%',
+          left: '52%',
+          width: '26%',
+          height: '16%',
+          descriptionUa: 'Деформація капота над зоною замка та фари. Потрібне рихтування або заміна.',
+          oemNumber: '1054488-00-A'
+        }
+      ] as BoundingBox[]
+    },
+    {
+      id: 'frunk-cooling',
+      title: 'Ракурс 2: Підкапотний простір & Охолодження',
+      badge: 'Силова частина & Батарея',
+      url: '/lots/tesla-x/frunk-damage.jpg',
+      boxes: [
+        {
+          id: 'b4',
+          labelUa: 'Розрив корпусу фари & Кронштейна',
+          zone: 'HEADLIGHT_BRACKET',
+          severity: 'SEVERE',
+          confidence: 97,
+          top: '50%',
+          left: '56%',
+          width: '32%',
+          height: '32%',
+          descriptionUa: 'Повний розрив пластикового корпусу LED фари, деформація монтажного телевізора.',
+          oemNumber: '1083983-00-A'
+        },
+        {
+          id: 'b5',
+          labelUa: 'Ризик розриву контуру охолодження батареї',
           zone: 'COOLING_LOOP',
           severity: 'ALERT',
-          confidence: 92,
-          top: '64%',
-          left: '60%',
-          width: '26%',
-          height: '20%',
-          descriptionUa: 'Удар в зону патрубків радіатора охолодження батареї та кондиціонера.',
+          confidence: 91,
+          top: '43%',
+          left: '32%',
+          width: '25%',
+          height: '34%',
+          descriptionUa: 'Відкриті патрубки та радіатор контуру терморегуляції високовольтної батареї.',
           oemNumber: '1077057-00-C'
         }
       ] as BoundingBox[]
     },
     {
-      id: 'engine-bay',
-      title: 'Ракурс 2: Підкапотний простір / Лонжерон',
-      badge: 'Силова геометрія',
-      url: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=1200&auto=format&fit=crop',
+      id: 'interior',
+      title: 'Ракурс 3: Салон & Панель приладів',
+      badge: 'Салон: Подушки цілі',
+      url: '/lots/tesla-x/interior.jpg',
       boxes: [
         {
-          id: 'b4',
-          labelUa: 'Зміщення чашки лонжерона (2.5 см)',
-          zone: 'FRONT_RIGHT_FRAME',
-          severity: 'SEVERE',
-          confidence: 87,
-          top: '38%',
-          left: '45%',
-          width: '30%',
-          height: '35%',
-          descriptionUa: 'Потрібна витяжка на стапелі за контрольною геометрією заводу.',
-          oemNumber: '1027351-00-C'
+          id: 'b6',
+          labelUa: 'Кермо та подушка водія (SRS Intact)',
+          zone: 'STEERING_AIRBAG',
+          severity: 'MINOR',
+          confidence: 99,
+          top: '32%',
+          left: '28%',
+          width: '23%',
+          height: '40%',
+          descriptionUa: 'Подушка безпеки водія не спрацьовувала, маточина та піропатрон цілі.',
+          oemNumber: '1064249-00-B'
+        },
+        {
+          id: 'b7',
+          labelUa: 'Центральний дисплей MCU (17")',
+          zone: 'CENTER_SCREEN',
+          severity: 'MINOR',
+          confidence: 95,
+          top: '34%',
+          left: '42%',
+          width: '14%',
+          height: '33%',
+          descriptionUa: 'Екран мультимедіа та торпедо без механічних пошкоджень.',
+          oemNumber: '1084333-00-B'
         }
       ] as BoundingBox[]
-    },
-    {
-      id: 'interior',
-      title: 'Ракурс 3: Салон / Піропатрони',
-      badge: inspection.airbagsDeployed ? 'Airbags: Спрацювали' : 'Airbags: Цілі',
-      url: 'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1200&auto=format&fit=crop',
-      boxes: inspection.airbagsDeployed ? [
-        {
-          id: 'b5',
-          labelUa: 'Спрацювання подушки керма (Driver Airbag)',
-          zone: 'STEERING_AIRBAG',
-          severity: 'SEVERE',
-          confidence: 98,
-          top: '40%',
-          left: '42%',
-          width: '24%',
-          height: '30%',
-          descriptionUa: 'Розірвана кришка маточини керма. Заміна модуля та перепрошивка SRS.',
-          oemNumber: '1064249-00-B'
-        }
-      ] : [] as BoundingBox[]
     }
   ]
 
@@ -145,7 +170,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
               Мультимодальний комп'ютерний зір (Computer Vision Damage Inspection)
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-              Детекція пошкоджень кузова та силових елементів {make} {model} за фотографіями аукціону
+              Детекція пошкоджень кузова та силових елементів {make} {model} за фотографіями аукціону Copart
             </p>
           </div>
         </div>
@@ -182,7 +207,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
       <div style={{
         position: 'relative',
         width: '100%',
-        height: '420px',
+        height: '440px',
         borderRadius: '16px',
         overflow: 'hidden',
         border: '1px solid rgba(0, 210, 255, 0.25)',
@@ -196,11 +221,11 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
             width: '100%',
             height: '100%',
             objectFit: 'cover',
-            filter: 'brightness(0.9) contrast(1.05)'
+            filter: 'brightness(0.95) contrast(1.02)'
           }}
         />
 
-        {/* Scanline & HUD Grid Overlay */}
+        {/* Scanline HUD Grid Overlay */}
         <div style={{
           position: 'absolute',
           inset: 0,
@@ -234,7 +259,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
             gap: '6px'
           }}>
             <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10b981', display: 'inline-block' }} />
-            <span>AI SCAN ACTIVE // COPART LOT INSPECTED</span>
+            <span>AI SCAN ACTIVE // COPART LOT #34567891</span>
           </div>
 
           <div style={{
@@ -253,7 +278,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
         {/* Render Bounding Boxes */}
         {showOverlays && currentPhoto.boxes.map((box) => {
           const isSelected = selectedBoxId === box.id || (!selectedBoxId && box.id === currentPhoto.boxes[0]?.id)
-          const borderColor = box.severity === 'ALERT' ? '#f43f5e' : box.severity === 'SEVERE' ? '#ef4444' : '#f59e0b'
+          const borderColor = box.severity === 'ALERT' ? '#f43f5e' : box.severity === 'SEVERE' ? '#ef4444' : box.severity === 'MODERATE' ? '#f59e0b' : '#10b981'
 
           return (
             <div
@@ -323,7 +348,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                 <span style={{
-                  background: selectedBox.severity === 'ALERT' ? '#f43f5e' : '#ef4444',
+                  background: selectedBox.severity === 'ALERT' ? '#f43f5e' : selectedBox.severity === 'SEVERE' ? '#ef4444' : selectedBox.severity === 'MODERATE' ? '#f59e0b' : '#10b981',
                   color: '#fff',
                   fontSize: '10px',
                   fontWeight: 700,
