@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AiInspectionResult } from '../types'
-import { Eye, ShieldCheck, AlertTriangle, Crosshair, ChevronRight } from 'lucide-react'
+import { Eye, ShieldCheck, AlertTriangle, Crosshair, ChevronRight, CheckCircle2 } from 'lucide-react'
 
 interface Props {
   inspection: AiInspectionResult
@@ -27,13 +27,14 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
   const [showOverlays, setShowOverlays] = useState(true)
   const [selectedBoxId, setSelectedBoxId] = useState<string | null>(null)
 
-  // Real Copart salvage photos of Tesla Model X
+  // Real Copart salvage photos of Tesla Model X with actual damage mapping
   const photoAngles = [
     {
       id: 'front-right',
-      title: 'Ракурс 1: Передній удар 3/4 (Copart Yard)',
-      badge: 'Головне пошкодження',
+      title: 'Ракурс 1: Передній удар 3/4',
+      badge: 'Головне пошкодження (3 дефекти)',
       url: '/lots/tesla-x/front-right.jpg',
+      hasDamage: true,
       boxes: [
         {
           id: 'b1',
@@ -42,7 +43,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           severity: 'SEVERE',
           confidence: 96,
           top: '53%',
-          left: '48%',
+          left: '49%',
           width: '24%',
           height: '26%',
           descriptionUa: 'Зминання абсорбера, розрив кріплень LED-модуля фари. Потрібна заміна в зборі.',
@@ -55,7 +56,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           severity: 'SEVERE',
           confidence: 93,
           top: '47%',
-          left: '40%',
+          left: '41%',
           width: '13%',
           height: '22%',
           descriptionUa: 'Глибокий залом алюмінієвої панелі крила над колісною аркою. Заміна під фарбування.',
@@ -71,7 +72,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           left: '52%',
           width: '26%',
           height: '16%',
-          descriptionUa: 'Деформація капота над зоною замка та фари. Потрібне рихтування або заміна.',
+          descriptionUa: 'Деформація капота над зоною замка та фари. Рихтування з фарбуванням.',
           oemNumber: '1054488-00-A'
         }
       ] as BoundingBox[]
@@ -79,8 +80,9 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
     {
       id: 'frunk-cooling',
       title: 'Ракурс 2: Підкапотний простір & Охолодження',
-      badge: 'Силова частина & Батарея',
+      badge: 'Силова частина & Батарея (2 дефекти)',
       url: '/lots/tesla-x/frunk-damage.jpg',
+      hasDamage: true,
       boxes: [
         {
           id: 'b4',
@@ -92,7 +94,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           left: '56%',
           width: '32%',
           height: '32%',
-          descriptionUa: 'Повний розрив пластикового корпусу LED фари, деформація монтажного телевізора.',
+          descriptionUa: 'Повний розрив пластикового корпусу LED фари, деформація монтажного кронштейна.',
           oemNumber: '1083983-00-A'
         },
         {
@@ -105,7 +107,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           left: '32%',
           width: '25%',
           height: '34%',
-          descriptionUa: 'Відкриті патрубки та радіатор контуру терморегуляції високовольтної батареї.',
+          descriptionUa: 'Удар в зону патрубків терморегуляції високовольтної батареї. Потрібна опресовка контуру.',
           oemNumber: '1077057-00-C'
         }
       ] as BoundingBox[]
@@ -113,36 +115,10 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
     {
       id: 'interior',
       title: 'Ракурс 3: Салон & Панель приладів',
-      badge: 'Салон: Подушки цілі',
+      badge: 'Салон: Дефектів немає (Цілий)',
       url: '/lots/tesla-x/interior.jpg',
-      boxes: [
-        {
-          id: 'b6',
-          labelUa: 'Кермо та подушка водія (SRS Intact)',
-          zone: 'STEERING_AIRBAG',
-          severity: 'MINOR',
-          confidence: 99,
-          top: '32%',
-          left: '28%',
-          width: '23%',
-          height: '40%',
-          descriptionUa: 'Подушка безпеки водія не спрацьовувала, маточина та піропатрон цілі.',
-          oemNumber: '1064249-00-B'
-        },
-        {
-          id: 'b7',
-          labelUa: 'Центральний дисплей MCU (17")',
-          zone: 'CENTER_SCREEN',
-          severity: 'MINOR',
-          confidence: 95,
-          top: '34%',
-          left: '42%',
-          width: '14%',
-          height: '33%',
-          descriptionUa: 'Екран мультимедіа та торпедо без механічних пошкоджень.',
-          oemNumber: '1084333-00-B'
-        }
-      ] as BoundingBox[]
+      hasDamage: false,
+      boxes: [] as BoundingBox[] // Zero damage boxes for clean intact interior!
     }
   ]
 
@@ -203,7 +179,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
         </div>
       </div>
 
-      {/* Main Interactive Image Stage with Bounding Boxes */}
+      {/* Main Interactive Image Stage */}
       <div style={{
         position: 'relative',
         width: '100%',
@@ -275,10 +251,10 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           </div>
         </div>
 
-        {/* Render Bounding Boxes */}
+        {/* Render Bounding Boxes ONLY if photo has actual damages */}
         {showOverlays && currentPhoto.boxes.map((box) => {
           const isSelected = selectedBoxId === box.id || (!selectedBoxId && box.id === currentPhoto.boxes[0]?.id)
-          const borderColor = box.severity === 'ALERT' ? '#f43f5e' : box.severity === 'SEVERE' ? '#ef4444' : box.severity === 'MODERATE' ? '#f59e0b' : '#10b981'
+          const borderColor = box.severity === 'ALERT' ? '#f43f5e' : box.severity === 'SEVERE' ? '#ef4444' : '#f59e0b'
 
           return (
             <div
@@ -291,8 +267,8 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
                 width: box.width,
                 height: box.height,
                 border: `2px solid ${borderColor}`,
-                background: isSelected ? 'rgba(239, 68, 68, 0.2)' : 'rgba(239, 68, 68, 0.08)',
-                boxShadow: isSelected ? `0 0 15px ${borderColor}` : `0 0 8px rgba(0, 0, 0, 0.5)`,
+                background: isSelected ? 'rgba(239, 68, 68, 0.22)' : 'rgba(239, 68, 68, 0.08)',
+                boxShadow: isSelected ? `0 0 18px ${borderColor}` : `0 0 8px rgba(0, 0, 0, 0.5)`,
                 cursor: 'pointer',
                 transition: 'all 0.2s ease',
                 borderRadius: '6px'
@@ -328,14 +304,14 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           )
         })}
 
-        {/* Selected Box Interactive Bottom Card */}
-        {showOverlays && selectedBox && (
+        {/* Selected Box Interactive Bottom Card for Damaged Areas */}
+        {showOverlays && currentPhoto.hasDamage && selectedBox && (
           <div style={{
             position: 'absolute',
             bottom: '12px',
             left: '12px',
             right: '12px',
-            background: 'rgba(13, 18, 29, 0.92)',
+            background: 'rgba(13, 18, 29, 0.94)',
             backdropFilter: 'blur(12px)',
             border: '1px solid rgba(0, 210, 255, 0.3)',
             borderRadius: '10px',
@@ -348,7 +324,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
                 <span style={{
-                  background: selectedBox.severity === 'ALERT' ? '#f43f5e' : selectedBox.severity === 'SEVERE' ? '#ef4444' : selectedBox.severity === 'MODERATE' ? '#f59e0b' : '#10b981',
+                  background: selectedBox.severity === 'ALERT' ? '#f43f5e' : selectedBox.severity === 'SEVERE' ? '#ef4444' : '#f59e0b',
                   color: '#fff',
                   fontSize: '10px',
                   fontWeight: 700,
@@ -375,6 +351,34 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
               <span>Знайти на Avto.pro</span>
               <ChevronRight size={14} />
             </a>
+          </div>
+        )}
+
+        {/* Clean Interior Verification Card if no damages */}
+        {!currentPhoto.hasDamage && (
+          <div style={{
+            position: 'absolute',
+            bottom: '12px',
+            left: '12px',
+            right: '12px',
+            background: 'rgba(6, 78, 59, 0.88)',
+            backdropFilter: 'blur(12px)',
+            border: '1px solid #10b981',
+            borderRadius: '10px',
+            padding: '12px 18px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px'
+          }}>
+            <CheckCircle2 size={24} color="#34d399" />
+            <div>
+              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ecfdf5' }}>
+                ШІ-верифікація салону: Пошкоджень та слідів розкриття систем SRS не виявлено
+              </div>
+              <p style={{ fontSize: '12px', color: '#a7f3d0', margin: '2px 0 0 0' }}>
+                Подушка безпеки водія (SRS) ціла, піропатрони не спрацьовували. Дисплей MCU (17") та торпедо в заводському стані. Заміна не потрібна.
+              </p>
+            </div>
           </div>
         )}
       </div>
@@ -411,8 +415,8 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
                 <div style={{ fontSize: '12px', fontWeight: 600, color: isActive ? '#fff' : 'var(--text-secondary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {p.title}
                 </div>
-                <div style={{ fontSize: '10px', color: 'var(--accent-cyan)' }}>
-                  {p.badge} ({p.boxes.length} {p.boxes.length === 1 ? 'зона' : 'зони'})
+                <div style={{ fontSize: '10px', color: p.hasDamage ? 'var(--accent-cyan)' : '#34d399' }}>
+                  {p.badge}
                 </div>
               </div>
             </div>
@@ -448,7 +452,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           color: inspection.airbagsDeployed ? '#fb7185' : '#34d399'
         }}>
           {inspection.airbagsDeployed ? <AlertTriangle size={16} /> : <ShieldCheck size={16} />}
-          <span>{inspection.airbagsDeployed ? 'Airbags: Спрацювали подушки (SRS відновлення)' : 'Airbags: Салон і подушки цілі'}</span>
+          <span>{inspection.airbagsDeployed ? 'Airbags: Спрацювали подушки' : 'Airbags: Салон і подушки цілі'}</span>
         </div>
 
         <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
