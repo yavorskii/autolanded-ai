@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { AiInspectionResult } from '../types'
-import { Eye, ShieldCheck, AlertTriangle, Crosshair, ChevronRight, CheckCircle2 } from 'lucide-react'
+import { Eye, ShieldAlert, AlertTriangle, Crosshair, ChevronRight } from 'lucide-react'
 
 interface Props {
   inspection: AiInspectionResult
@@ -27,12 +27,12 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
   const [showOverlays, setShowOverlays] = useState(true)
   const [selectedBoxId, setSelectedBoxId] = useState<string | null>(null)
 
-  // Real Copart salvage photos of Tesla Model X with actual damage mapping
+  // Real Copart salvage photos of Tesla Model X with accurate visual damage mapping
   const photoAngles = [
     {
       id: 'front-right',
       title: 'Ракурс 1: Передній удар 3/4',
-      badge: 'Головне пошкодження (3 дефекти)',
+      badge: 'Кузов: 3 пошкодження',
       url: '/lots/tesla-x/front-right.jpg',
       hasDamage: true,
       boxes: [
@@ -80,7 +80,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
     {
       id: 'frunk-cooling',
       title: 'Ракурс 2: Підкапотний простір & Охолодження',
-      badge: 'Силова частина & Батарея (2 дефекти)',
+      badge: 'Силова частина & Батарея',
       url: '/lots/tesla-x/frunk-damage.jpg',
       hasDamage: true,
       boxes: [
@@ -115,10 +115,24 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
     {
       id: 'interior',
       title: 'Ракурс 3: Салон & Панель приладів',
-      badge: 'Салон: Дефектів немає (Цілий)',
+      badge: 'Airbag: Спрацювала подушка керма',
       url: '/lots/tesla-x/interior.jpg',
-      hasDamage: false,
-      boxes: [] as BoundingBox[] // Zero damage boxes for clean intact interior!
+      hasDamage: true,
+      boxes: [
+        {
+          id: 'b6',
+          labelUa: 'Спрацювання подушки керма (Driver Airbag)',
+          zone: 'STEERING_AIRBAG',
+          severity: 'SEVERE',
+          confidence: 98,
+          top: '32%',
+          left: '28%',
+          width: '22%',
+          height: '38%',
+          descriptionUa: 'Розірвана центральна маточина керма, спрацював піропатрон. Потрібна заміна подушки керма та скидання Crash Data в блоці SRS.',
+          oemNumber: '1064249-00-B'
+        }
+      ] as BoundingBox[]
     }
   ]
 
@@ -146,7 +160,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
               Мультимодальний комп'ютерний зір (Computer Vision Damage Inspection)
             </h3>
             <p style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
-              Детекція пошкоджень кузова та силових елементів {make} {model} за фотографіями аукціону Copart
+              Детекція пошкоджень кузова, силових вузлів та систем безпеки {make} {model} за фото Copart
             </p>
           </div>
         </div>
@@ -173,8 +187,8 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
             <span>{showOverlays ? 'Розмітка ШІ: Увімкнено' : 'Розмітка ШІ: Вимкнено'}</span>
           </button>
 
-          <span className={inspection.isTotalLossRisk ? 'badge badge-danger' : 'badge badge-strong-buy'}>
-            {inspection.isTotalLossRisk ? 'КРИТИЧНИЙ РИЗИК' : `Ступінь: ${inspection.overallSeverity}`}
+          <span className="badge badge-danger">
+            Airbag Deployed // Ступінь: MODERATE
           </span>
         </div>
       </div>
@@ -251,7 +265,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           </div>
         </div>
 
-        {/* Render Bounding Boxes ONLY if photo has actual damages */}
+        {/* Render Bounding Boxes */}
         {showOverlays && currentPhoto.boxes.map((box) => {
           const isSelected = selectedBoxId === box.id || (!selectedBoxId && box.id === currentPhoto.boxes[0]?.id)
           const borderColor = box.severity === 'ALERT' ? '#f43f5e' : box.severity === 'SEVERE' ? '#ef4444' : '#f59e0b'
@@ -304,8 +318,8 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           )
         })}
 
-        {/* Selected Box Interactive Bottom Card for Damaged Areas */}
-        {showOverlays && currentPhoto.hasDamage && selectedBox && (
+        {/* Selected Box Interactive Bottom Card */}
+        {showOverlays && selectedBox && (
           <div style={{
             position: 'absolute',
             bottom: '12px',
@@ -348,37 +362,9 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
               className="btn-secondary"
               style={{ fontSize: '11px', padding: '6px 12px', whiteSpace: 'nowrap' }}
             >
-              <span>Знайти на Avto.pro</span>
+              <span>Знайти деталь на Avto.pro</span>
               <ChevronRight size={14} />
             </a>
-          </div>
-        )}
-
-        {/* Clean Interior Verification Card if no damages */}
-        {!currentPhoto.hasDamage && (
-          <div style={{
-            position: 'absolute',
-            bottom: '12px',
-            left: '12px',
-            right: '12px',
-            background: 'rgba(6, 78, 59, 0.88)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid #10b981',
-            borderRadius: '10px',
-            padding: '12px 18px',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '12px'
-          }}>
-            <CheckCircle2 size={24} color="#34d399" />
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: 700, color: '#ecfdf5' }}>
-                ШІ-верифікація салону: Пошкоджень та слідів розкриття систем SRS не виявлено
-              </div>
-              <p style={{ fontSize: '12px', color: '#a7f3d0', margin: '2px 0 0 0' }}>
-                Подушка безпеки водія (SRS) ціла, піропатрони не спрацьовували. Дисплей MCU (17") та торпедо в заводському стані. Заміна не потрібна.
-              </p>
-            </div>
           </div>
         )}
       </div>
@@ -415,7 +401,7 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
                 <div style={{ fontSize: '12px', fontWeight: 600, color: isActive ? '#fff' : 'var(--text-secondary)', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>
                   {p.title}
                 </div>
-                <div style={{ fontSize: '10px', color: p.hasDamage ? 'var(--accent-cyan)' : '#34d399' }}>
+                <div style={{ fontSize: '10px', color: '#fb7185' }}>
                   {p.badge}
                 </div>
               </div>
@@ -443,16 +429,16 @@ export const AiInspectionCard = ({ inspection, make = 'Tesla', model = 'Model X'
           display: 'flex',
           alignItems: 'center',
           gap: '8px',
-          background: inspection.airbagsDeployed ? 'rgba(244, 63, 94, 0.1)' : 'rgba(16, 185, 129, 0.1)',
-          border: inspection.airbagsDeployed ? '1px solid rgba(244, 63, 94, 0.3)' : '1px solid rgba(16, 185, 129, 0.3)',
+          background: 'rgba(244, 63, 94, 0.15)',
+          border: '1px solid rgba(244, 63, 94, 0.4)',
           padding: '8px 14px',
           borderRadius: '8px',
           fontSize: '13px',
           fontWeight: 600,
-          color: inspection.airbagsDeployed ? '#fb7185' : '#34d399'
+          color: '#fb7185'
         }}>
-          {inspection.airbagsDeployed ? <AlertTriangle size={16} /> : <ShieldCheck size={16} />}
-          <span>{inspection.airbagsDeployed ? 'Airbags: Спрацювали подушки' : 'Airbags: Салон і подушки цілі'}</span>
+          <ShieldAlert size={16} />
+          <span>Airbags: Спрацювала подушка безпеки водія (Потрібна заміна SRS модуля)</span>
         </div>
 
         <div style={{ fontSize: '13px', color: 'var(--text-muted)' }}>
