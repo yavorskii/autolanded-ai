@@ -122,7 +122,7 @@ export default function App() {
             />
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
-              <AiInspectionCard inspection={report.aiInspection} />
+              <AiInspectionCard inspection={report.aiInspection} make={report.specification.make} model={report.specification.model} />
               <FinancialSummaryCard
                 auctionPrice={report.customs.customsValueUsd - 1650 > 0 ? report.customs.customsValueUsd - 1650 : 7050}
                 customs={report.customs}

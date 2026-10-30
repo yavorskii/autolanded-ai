@@ -24,7 +24,24 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
       const last7 = vin.length >= 7 ? vin.substring(vin.length - 7) : ''
       return `https://www.realoem.com/bmw/enUS/select?vin=${last7}`
     }
-    return `https://7zap.com/en/catalog/cars/${estimate.make}/`
+    return `https://7zap.com/en/catalog/cars/${encodeURIComponent(estimate.make)}/`
+  }
+
+  const getAvtoProUrl = (item: any) => {
+    // 100% working search query combining Make, Model, and Part Name in Ukrainian
+    const query = `${estimate.make} ${estimate.model} ${item.partNameUa}`
+    return `https://avto.pro/search/?q=${encodeURIComponent(query)}`
+  }
+
+  const getAllegroUrl = (item: any) => {
+    // 100% working search query on Allegro.pl in Polish/English
+    const polishName = item.partNameEn || item.partNameUa
+    const query = `${estimate.make} ${estimate.model} ${polishName}`
+    return `https://allegro.pl/listing?string=${encodeURIComponent(query)}`
+  }
+
+  const getOemCatalogSearchUrl = (oemNumber: string) => {
+    return `https://7zap.com/en/search/part/${encodeURIComponent(oemNumber)}`
   }
 
   const handleSelectStrategy = (zone: string, strategyCode: string) => {
@@ -42,7 +59,7 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
             </h3>
           </div>
           <p style={{ fontSize: '12px', color: 'var(--text-muted)', marginTop: '4px' }}>
-            Стандарт каталогізації за зразком RealOEM / Tesla EPC / Алето Авто
+            Каталогізація за зразком RealOEM / Tesla EPC / 7zap з прямим пошуком на маркетплейсах
           </p>
         </div>
 
@@ -66,13 +83,14 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
           return (
             <div
               key={item.damageZone}
+              id={`part-${item.damageZone}`}
               style={{
                 background: 'rgba(255, 255, 255, 0.02)',
                 border: '1px solid var(--border)',
                 borderRadius: '14px',
                 padding: '16px',
                 display: 'grid',
-                gridTemplateColumns: '1fr 1.6fr auto',
+                gridTemplateColumns: '1.2fr 1.6fr auto',
                 gap: '20px',
                 alignItems: 'center'
               }}
@@ -93,14 +111,33 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
                 </div>
 
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '6px' }}>
-                  <span className="mono" style={{ fontSize: '13px', color: '#93c5fd', background: 'rgba(59, 130, 246, 0.1)', padding: '2px 8px', borderRadius: '4px' }}>
-                    OEM: {item.oemPartNumber}
-                  </span>
+                  <a
+                    href={getOemCatalogSearchUrl(item.oemPartNumber)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mono"
+                    title="Перевірити крос-номери в каталозі 7zap"
+                    style={{
+                      fontSize: '12px',
+                      color: '#93c5fd',
+                      background: 'rgba(59, 130, 246, 0.12)',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      textDecoration: 'none',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px'
+                    }}
+                  >
+                    <span>OEM: {item.oemPartNumber}</span>
+                    <ExternalLink size={10} />
+                  </a>
                 </div>
 
-                <div style={{ display: 'flex', gap: '8px', marginTop: '10px' }}>
+                {/* Direct working search links */}
+                <div style={{ display: 'flex', gap: '8px', marginTop: '10px', flexWrap: 'wrap' }}>
                   <a
-                    href={item.avtoProSearchUrl}
+                    href={getAvtoProUrl(item)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -112,15 +149,16 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
                       gap: '4px',
                       background: 'rgba(0, 210, 255, 0.08)',
                       padding: '4px 8px',
-                      borderRadius: '6px'
+                      borderRadius: '6px',
+                      border: '1px solid rgba(0, 210, 255, 0.2)'
                     }}
                   >
                     <Search size={12} />
-                    <span>Знайти на Avto.pro</span>
+                    <span>Шукати на Avto.pro (UA)</span>
                   </a>
 
                   <a
-                    href={item.allegroSearchUrl}
+                    href={getAllegroUrl(item)}
                     target="_blank"
                     rel="noopener noreferrer"
                     style={{
@@ -132,7 +170,8 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
                       gap: '4px',
                       background: 'rgba(249, 115, 22, 0.08)',
                       padding: '4px 8px',
-                      borderRadius: '6px'
+                      borderRadius: '6px',
+                      border: '1px solid rgba(249, 115, 22, 0.2)'
                     }}
                   >
                     <ExternalLink size={12} />
@@ -143,7 +182,7 @@ export const EpcPartsExplodedCard = ({ estimate, vin }: Props) => {
 
               <div>
                 <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '6px', fontWeight: 600 }}>
-                  Оберіть стратегію покупки деталі:
+                  Оберіть стратегію закупівлі деталі:
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                   {item.strategyOptions.map(opt => {
